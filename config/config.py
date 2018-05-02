@@ -2,10 +2,13 @@
 import os
 import json
 import logging
+import traceback
 
-JSON = "json"
-XML = "xml"
-PROP = "properties"
+class constant:
+    DEFAULT_LOG_DIR = "/var/log/"
+    JSON = "json"
+    XML = "xml"
+    PROP = "properties"
 
 # file convert function dictionary
 def load_json_file(file):
@@ -13,12 +16,12 @@ def load_json_file(file):
      return config_file
 
 __load_file_method = {
-    JSON : load_json_file
+    constant.JSON : load_json_file
 }
 
 # get logger
 def get_logger():
-    DEFAULT_LOG_FILE = "/var/log/setup.log"
+    DEFAULT_LOG_FILE = constant.DEFAULT_LOG_DIR + "setup.log"
     DEFAULT_LEVEL = logging.INFO
 
     logging.basicConfig(level=DEFAULT_LEVEL, filename=DEFAULT_LOG_FILE)
@@ -40,7 +43,7 @@ def open_config_file(file_name):
 
             return config_file
         except Exception:
-            logger.error("Expection occured when opening configuration file")
+            logger.error("Expection occured when opening configuration file.\n%s", traceback.format_exc())
             file.close()
 
     return None

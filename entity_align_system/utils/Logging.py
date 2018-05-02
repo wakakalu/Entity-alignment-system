@@ -4,9 +4,11 @@ import os
 import logging.config
 from config import config
 
+CONSTANTS = config.constant
+
 DEFAULT_CONFIG_FILE = "logging.json"
 DEFAULT_ENV_KEY = "LOG_CFG"
-DEFAULT_LOG_FILE = "/var/log/eas.log"
+DEFAULT_LOG_FILE = CONSTANTS.DEFAULT_LOG_DIR + "eas.log"
 DEFAULT_LEVEL = logging.INFO
 
 class Logging(object):
