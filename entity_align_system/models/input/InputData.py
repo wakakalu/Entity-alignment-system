@@ -1,14 +1,15 @@
 # -*- coding:utf-8 -*-
 import traceback
-
 from SPARQLWrapper import SPARQLWrapper
-import logging
+from entity_align_system.utils import Logging
 
 DBPEDIA = "DBPedia"
 YAGO = "YAGO"
 DBPEDIA_ENDPOINT = "http://dbpedia.org/sparql"
 YAGO_ENDPOINT = "https://linkeddata1.calcul.u-psud.fr/sparql"
 DEFAULT_RETURN_FORMAT = "json"
+
+logger = Logging.get_logger()
 
 def input_single_dataset(self, endpoint, statement, ret_format):
     # check endpoint value
@@ -31,7 +32,7 @@ def input_single_dataset(self, endpoint, statement, ret_format):
     try:
         return_value = self.sparql.query().convert()
     except Exception:
-        logging.error("Exception occurs when retrieving data from DBPedia.\n%s", traceback.format_exc())
+        logger.error("Exception occurs when retrieving data from DBPedia.\n%s", traceback.format_exc())
 
     return return_value
 
