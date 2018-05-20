@@ -38,7 +38,10 @@ def input_single_dataset(self, endpoint, statement, ret_format):
 
 
 def input_data():
-    statement = ""
+    statement = """
+        SELECT * 
+        where {?s ?p ?o} 
+    """
     
     # Compose data dict
     data_dict = {}
