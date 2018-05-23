@@ -6,7 +6,7 @@ DEFAULT_HOST="localhost"
 DEFAULT_USER="root"
 DEFAULT_DB="hike"
 
-class DBConnector(object):
+class MysqlConnector(object):
     def _connect_db(self,dbname=None):
         if dbname == None:
             dbname = DEFAULT_DB
