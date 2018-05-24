@@ -25,6 +25,16 @@ class MysqlOperator(object):
 
         return self.cursor.execute(statement).fetchone()
 
+    def get_ochiai_on_kb(self, kbname, preds1, preds2):
+        statement = """
+        SELECT subject, predicate, object FROM %s WHERE predicate=%s
+        INTERSECT
+        SELECT subject, predicate, object FROM %s WHERE predicate=%s
+        
+        """ % (kbname, " or ".join(preds1), kbname, " or ".join(preds2))
+
+        return self.cursor.execute(statement)
+
     def insert_kbdata(self, dataset):
         pass
 

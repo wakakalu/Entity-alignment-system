@@ -63,7 +63,7 @@ class Input(object):
             if len(dataset) < BATCH_SIZE:
                 break
 
-            i = i + 1
+            i += 1
 
         # input yago data
         i = 0
@@ -82,6 +82,6 @@ class Input(object):
             if len(dataset) < BATCH_SIZE:
                 break
 
-            i = i + 1
+            i += 1
 
         self.dboperator.close_connection()

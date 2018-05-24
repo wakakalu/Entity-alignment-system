@@ -6,18 +6,23 @@ from __future__ import division
 from numpy import array, zeros, argmax
 from entity_align_system import HikeMetaClass
 
+
 class EntityPartion(object):
     __metaclass__ = HikeMetaClass
 
     def __init__(self, dboperator):
         self.dboperator = dboperator
 
-    def partition(self,merge_threshold):
+    def partition(self, merge_threshold):
+        # TODO:decoupling kb,replace DBPedia & YAGO with abstract KB type
+        # predicate list of predicates from dbpedia and yago
         dbpedia_preds = self.dboperator.get_predicates("DBPedia")
         yago_preds = self.dboperator.get_predicates("YAGO")
 
-        pred_pair_list = self.get_pred_pars(dbpedia_preds, yago_preds)
+        # predicate pairs calculated from predicate similar matrix W
+        pred_pair_list = self.get_pred_pairs(dbpedia_preds, yago_preds)
 
+        # Queue merge similarity threshold
         if merge_threshold == None:
             merge_threshold = 0
 
@@ -26,15 +31,17 @@ class EntityPartion(object):
         cut_level = 1
         while cut_level >= merge_threshold:
             sim_matrix_w = self.refresh_sim_matrix(partition_queue)
-            partition_queue = self.merge_predicate_pairs(sim_matrix_w)
+            partition_queue = self.merge_predicate_pairs(partition_queue, sim_matrix_w, cut_level)
 
             cut_level = cut_level - gap
 
         entity_pair_blocks = self.generate_entity_blocks(partition_queue)
 
+        self.dboperator.close_connection()
+
         return entity_pair_blocks
 
-    def get_pred_pars(self, dbpedia_preds, yago_preds):
+    def get_pred_pairs(self, dbpedia_preds, yago_preds):
         dbpedia_pred_num = len(dbpedia_preds)
         yago_pred_num = len(yago_preds)
 
@@ -61,11 +68,37 @@ class EntityPartion(object):
 
         return intersection_num / union_num
 
+    def refresh_sim_matrix(self, pred_pair_list):
+        pred_pair_list_len = len(pred_pair_list)
+
+        pred_pair_sim_matrix = []
+        for i in range(pred_pair_list_len):
+            pred_pair_sim_matrix += [[]]
+            for j in range(i):
+                pred_pair_sim = self.pred_pair_sim_calc(pred_pair_list[i], pred_pair_list[j])
+                pred_pair_sim_matrix[i].append(pred_pair_sim)
+
+        return pred_pair_sim_matrix
+
+    def pred_pair_sim_calc(self, pred_pair1, pred_pair2):
+        cosine_sim_on_dbpedia = self.dboperator.get_ochiai_on_kb("DBPedia", pred_pair1[0], pred_pair2[0])
+        cosine_sim_on_yago = self.dboperator.get_ochiai_on_kb("YAGO", pred_pair1[1], pred_pair2[1])
+
+        return (cosine_sim_on_dbpedia + cosine_sim_on_yago) / 2
+
     def generate_queue(self, pred_pair_list):
+        queue = []
+        for pred_pair in pred_pair_list:
+            pred_list1 = [pred_pair[0]]
+            pred_list2 = [pred_pair[1]]
+
+            queue.append((pred_list1, pred_list2))
+
+        return queue
+
+    def merge_predicate_pairs(self, partition_queue, sim_matrix_w, cut_level):
+
         pass
 
-    def refresh_sim_matrix(self,pred_pair_list):
-        pass
-
-    def generate_entity_blocks(self,partition_queue):
+    def generate_entity_blocks(self, partition_queue):
         pass
