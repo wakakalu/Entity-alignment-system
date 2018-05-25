@@ -6,7 +6,6 @@ from __future__ import division
 from numpy import array, zeros, argmax
 from entity_align_system import HikeMetaClass
 
-
 class EntityPartion(object):
     __metaclass__ = HikeMetaClass
 

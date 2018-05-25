@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
-import traceback
 from SPARQLWrapper import SPARQLWrapper
 from entity_align_system.utils import Logging
 from entity_align_system import HikeMetaClass
+import traceback
 
 DBPEDIA = "DBPedia"
 YAGO = "YAGO"

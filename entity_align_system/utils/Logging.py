@@ -2,7 +2,7 @@
 import logging
 import os
 import logging.config
-from config import config
+import config
 
 CONSTANTS = config.constant
 

@@ -7,6 +7,8 @@ DEFAULT_USER="root"
 DEFAULT_DB="hike"
 
 class MysqlConnector(object):
+    db = None
+
     def _connect_db(self,dbname=None):
         if dbname == None:
             dbname = DEFAULT_DB

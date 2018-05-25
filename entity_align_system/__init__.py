@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from config import config
+import config
 from entity_align_system.models.DBOperator import DBOperatorMap
 
 class HikeMetaClass(type):
