@@ -100,4 +100,11 @@ class EntityPartion(object):
         pass
 
     def generate_entity_blocks(self, partition_queue):
-        pass
+        entity_blocks = []
+        for block in partition_queue:
+            entity_block1 = self.dboperator.get_entities("DBPedia", block[0])
+            entity_block2 = self.dboperator.get_entities("YAGO", block[1])
+
+            entity_blocks.append((entity_block1, entity_block2))
+
+        return entity_blocks

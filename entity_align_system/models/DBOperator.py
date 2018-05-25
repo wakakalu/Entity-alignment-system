@@ -3,10 +3,11 @@ from __future__ import division
 from entity_align_system.models.MysqlConnector import MysqlConnector
 import math
 
+
 class MysqlOperator(object):
     def connect_db(self):
         self.db_connector = MysqlConnector()
-        self.cursor =  self.db_connector.get_cursor()
+        self.cursor = self.db_connector.get_cursor()
 
     def get_predicates(self, kbname):
         statement = "SELECT DISTINCT predicate FROM %s" % kbname
@@ -28,8 +29,8 @@ class MysqlOperator(object):
         return self.cursor.execute(statement).fetchone()
 
     def get_ochiai_on_kb(self, kbname, preds1, preds2):
-        pred_query_criteria1 = " or ".join(preds1)
-        pred_query_criteria2 = " or ".join(preds2)
+        pred_query_criteria1 = " or predicate=".join(preds1)
+        pred_query_criteria2 = " or predicate=".join(preds2)
         statement = """
             SELECT COUNT(subject, predicate, object) FROM (
                 SELECT subject, predicate, object FROM %s WHERE predicate=%s
@@ -40,14 +41,19 @@ class MysqlOperator(object):
         intersection_size = self.cursor.execute(statement)
 
         statement = "SELECT COUNT(subject, predicate, object) FROM %s WHERE predicate=%s" % (
-        kbname, pred_query_criteria1)
+            kbname, pred_query_criteria1)
         size1 = self.cursor.execute(statement)
 
         statement = "SELECT COUNT(subject, predicate, object) FROM %s WHERE predicate=%s" % (
-        kbname, pred_query_criteria2)
+            kbname, pred_query_criteria2)
         size2 = self.cursor.execute(statement)
 
         return intersection_size / math.sqrt(size1 * size2)
+
+    def get_entities(self, kbname, predicates):
+        statement = "SELECT subject FROM %s WHERE predicate=%s" % (kbname, " or predicate=".join(predicates))
+
+        return self.cursor.execute(statement)
 
     def insert_kbdata(self, dataset):
         pass
@@ -58,10 +64,10 @@ class MysqlOperator(object):
     def close_connection(self):
         self.db_connector.close()
 
-class MongoOperator(object):
-    pass
+    class MongoOperator(object):
+        pass
 
-DBOperatorMap = {
-    "mysql" : MysqlOperator(),
-    "mongo" : MongoOperator()
-}
+    DBOperatorMap = {
+        "mysql": MysqlOperator(),
+        "mongo": MongoOperator()
+    }
