@@ -6,6 +6,7 @@ from __future__ import division
 from numpy import array, zeros, argmax
 from entity_align_system import HikeMetaClass
 
+
 class EntityPartion(object):
     __metaclass__ = HikeMetaClass
 
@@ -96,7 +97,6 @@ class EntityPartion(object):
         return queue
 
     def merge_predicate_pairs(self, partition_queue, sim_matrix_w, cut_level):
-
         pass
 
     def generate_entity_blocks(self, partition_queue):
