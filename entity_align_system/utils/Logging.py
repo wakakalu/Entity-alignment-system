@@ -23,8 +23,8 @@ def get_logger(name=None):
 
     if config_file:
         logging.config.dictConfig(config_file)
-        config_file.close()
     else:
         logging.basicConfig(level=DEFAULT_LEVEL, filename=DEFAULT_LOG_FILE)
 
     return logging.getLogger(name)
+

@@ -64,10 +64,11 @@ class MysqlOperator(object):
     def close_connection(self):
         self.db_connector.close()
 
-    class MongoOperator(object):
-        pass
+class MongoOperator(object):
+    pass
 
-    DBOperatorMap = {
-        "mysql": MysqlOperator(),
-        "mongo": MongoOperator()
-    }
+
+DBOperatorMap = {
+    "mysql": MysqlOperator(),
+    "mongo": MongoOperator()
+}

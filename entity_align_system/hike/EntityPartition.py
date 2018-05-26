@@ -97,6 +97,7 @@ class EntityPartion(object):
         return queue
 
     def merge_predicate_pairs(self, partition_queue, sim_matrix_w, cut_level):
+
         pass
 
     def generate_entity_blocks(self, partition_queue):

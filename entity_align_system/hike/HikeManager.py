@@ -25,5 +25,5 @@ class HikeManager(object):
 
         self.dboperator.insert_entity_pairs(matched_entity_pairs)
 
-def generate_matched_pairs(self, partial_orders, questions):
-        pass
+    def generate_matched_pairs(self, partial_orders, questions):
+            pass

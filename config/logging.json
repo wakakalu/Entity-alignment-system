@@ -1,9 +1,10 @@
 {
     "version": 1,
-    "disable_existing_loggers": false,
+    "disable_existing_loggers": true,
+
     "formatters": {
         "simple": {
-            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            "format": "[%(asctime)s] [%(levelname)s] %(message)s"
         }
     },
 
@@ -15,21 +16,21 @@
             "stream": "ext://sys.stdout"
         },
 
-        "info_file_handler": {
+        "eas_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "INFO",
             "formatter": "simple",
-            "filename": "/var/log/info.log",
+            "filename": "/var/log/eas.log",
             "maxBytes": 10485760,
             "backupCount": 20,
             "encoding": "utf8"
         },
 
-        "error_file_handler": {
+        "root_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
-            "level": "ERROR",
+            "level": "INFO",
             "formatter": "simple",
-            "filename": "/var/log/errors.log",
+            "filename": "/var/log/default.log",
             "maxBytes": 10485760,
             "backupCount": 20,
             "encoding": "utf8"
@@ -38,14 +39,14 @@
 
     "loggers": {
         "eas": {
-            "level": "ERROR",
-            "handlers": ["console"],
-            "propagate": "no"
+            "level": "INFO",
+            "handlers": ["eas_file_handler"],
+            "propagate": false
         }
     },
 
     "root": {
         "level": "INFO",
-        "handlers": ["console", "info_file_handler", "error_file_handler"]
+        "handlers": ["console", "root_file_handler"]
     }
 }
