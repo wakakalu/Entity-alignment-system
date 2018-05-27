@@ -5,7 +5,7 @@ Entity partition by hike method
 from __future__ import division
 from numpy import array, zeros, argmax
 from entity_align_system import HikeMetaClass
-
+import numpy as np
 
 class EntityPartion(object):
     __metaclass__ = HikeMetaClass
@@ -96,8 +96,48 @@ class EntityPartion(object):
         return queue
 
     def merge_predicate_pairs(self, partition_queue, sim_matrix_w, cut_level):
+        checked_node = []
+        pp_blocks = []
 
-        pass
+        # get index array which contains indices that beyond the cut level
+        beyond_threshold_indices = np.argwhere(sim_matrix_w > cut_level)
+        sim_matrix_w_len = len(sim_matrix_w)
+        # accelerate GC
+        sim_matrix_w = None
+
+        for i in range(sim_matrix_w_len):
+            if i in checked_node:
+                continue
+
+            block = [i]
+            while set(block) - set(checked_node):
+                different_set = set(block) - set(checked_node)
+
+                for ep in different_set:
+                    similar_ep_list = np.argwhere(beyond_threshold_indices[:,0] == ep)
+                    block+=beyond_threshold_indices[similar_ep_list[:,0].tolist()][:,1].tolist()
+                    beyond_threshold_indices = np.delete(beyond_threshold_indices, similar_ep_list, 0)
+                    checked_node.append(ep)
+
+                checked_node.append(different_set)
+
+        # each block contains the sequence number of a predicate pair partion in partition_queue
+        # e.g. pp_blocks = [[1,2,3],[4,5,6],[7,8,9]] means the first block contains the partitions
+        # whose sequence numbers are 1 ,2 and 3.
+        pp_blocks += [list(set(block))]
+
+        new_partion_queue = []
+        for block in pp_blocks:
+            pp_list_on_kb1 = []
+            pp_list_on_kb2 = []
+            for i in block:
+                pp_list_on_kb1 += partition_queue[i][0]
+                pp_list_on_kb2 += partition_queue[i][2]
+
+            new_partion_queue.append((pp_list_on_kb1,pp_list_on_kb2))
+
+        return new_partion_queue
+
 
     def generate_entity_blocks(self, partition_queue):
         entity_blocks = []
