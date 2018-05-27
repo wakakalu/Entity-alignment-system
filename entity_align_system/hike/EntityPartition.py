@@ -7,6 +7,7 @@ from numpy import array, zeros, argmax
 from entity_align_system import HikeMetaClass
 import numpy as np
 
+
 class EntityPartion(object):
     __metaclass__ = HikeMetaClass
 
@@ -31,8 +32,8 @@ class EntityPartion(object):
         cut_level = 1
         while cut_level >= merge_threshold:
             sim_matrix_w = self.refresh_sim_matrix(partition_queue)
-            partition_queue = self.merge_predicate_pairs(partition_queue, sim_matrix_w, cut_level)
-
+            pp_num_blocks = self.calc_pp_num_blocks(sim_matrix_w, cut_level)
+            partition_queue = self.merge_predicate_pairs(partition_queue, pp_num_blocks)
             cut_level = cut_level - gap
 
         entity_pair_blocks = self.generate_entity_blocks(partition_queue)
@@ -95,7 +96,7 @@ class EntityPartion(object):
 
         return queue
 
-    def merge_predicate_pairs(self, partition_queue, sim_matrix_w, cut_level):
+    def calc_pp_num_blocks(self, sim_matrix_w, cut_level):
         checked_node = []
         pp_blocks = []
 
@@ -114,30 +115,31 @@ class EntityPartion(object):
                 different_set = set(block) - set(checked_node)
 
                 for ep in different_set:
-                    similar_ep_list = np.argwhere(beyond_threshold_indices[:,0] == ep)
-                    block+=beyond_threshold_indices[similar_ep_list[:,0].tolist()][:,1].tolist()
+                    similar_ep_list = np.argwhere(beyond_threshold_indices[:, 0] == ep)
+                    block += beyond_threshold_indices[similar_ep_list[:, 0].tolist()][:, 1].tolist()
                     beyond_threshold_indices = np.delete(beyond_threshold_indices, similar_ep_list, 0)
-                    checked_node.append(ep)
 
-                checked_node.append(different_set)
+                checked_node += list(different_set)
 
-        # each block contains the sequence number of a predicate pair partion in partition_queue
-        # e.g. pp_blocks = [[1,2,3],[4,5,6],[7,8,9]] means the first block contains the partitions
-        # whose sequence numbers are 1 ,2 and 3.
-        pp_blocks += [list(set(block))]
+            # each block contains the sequence number of a predicate pair partion in partition_queue
+            # e.g. pp_blocks = [[1,2,3],[4,5,6],[7,8,9]] means the first block contains the partitions
+            # whose sequence numbers are 1 ,2 and 3.
+            pp_blocks += [list(set(block))]
 
+        return pp_blocks
+
+    def merge_predicate_pairs(self, partition_queue, pp_num_blocks):
         new_partion_queue = []
-        for block in pp_blocks:
+        for block in pp_num_blocks:
             pp_list_on_kb1 = []
             pp_list_on_kb2 = []
             for i in block:
                 pp_list_on_kb1 += partition_queue[i][0]
                 pp_list_on_kb2 += partition_queue[i][2]
 
-            new_partion_queue.append((pp_list_on_kb1,pp_list_on_kb2))
+            new_partion_queue.append((pp_list_on_kb1, pp_list_on_kb2))
 
         return new_partion_queue
-
 
     def generate_entity_blocks(self, partition_queue):
         entity_blocks = []

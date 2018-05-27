@@ -14,4 +14,4 @@ class HikeMetaClass(type):
         return obj
 
     def get_dbtype(self):
-        return config.get_config_item()
+        return config.get_config_item(item="dbtype")
