@@ -70,15 +70,14 @@ class EntityPartion(object):
 
     def refresh_sim_matrix(self, pred_pair_list):
         pred_pair_list_len = len(pred_pair_list)
+        pred_pair_sim_matrix = array(zeros(pred_pair_list_len, pred_pair_list_len))
 
-        pred_pair_sim_matrix = []
+        # pred_pair_sim_matrix = []
         for i in range(pred_pair_list_len):
-            pred_pair_sim_matrix += [[]]
             for j in range(i):
-                pred_pair_sim = self.pred_pair_sim_calc(pred_pair_list[i], pred_pair_list[j])
-                pred_pair_sim_matrix[i].append(pred_pair_sim)
+                pred_pair_sim_matrix[i][j] = self.pred_pair_sim_calc(pred_pair_list[i], pred_pair_list[j])
 
-        return pred_pair_sim_matrix
+        return pred_pair_sim_matrix + pred_pair_sim_matrix.T
 
     def pred_pair_sim_calc(self, pred_pair1, pred_pair2):
         cosine_sim_on_dbpedia = self.dboperator.get_ochiai_on_kb("DBPedia", pred_pair1[0], pred_pair2[0])

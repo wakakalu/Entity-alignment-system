@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
-import config
 from entity_align_system.models.DBOperator import DBOperatorMap
+import config
 
 class HikeMetaClass(type):
     def __call__(cls, *args, **kwargs):
