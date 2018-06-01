@@ -5,8 +5,8 @@ This module controls other hike modules.This module makes data flow through othe
 
 # use as statement to make refactor easier
 from entity_align_system.models.Input import Input
-import EntityPartition as EntityPartition
-import PartialOrderConstruct as PartialOrderConstruct
+from EntityPartition import EntityPartition
+from PartialOrderConstruct import PartialOrderConstruct
 import QuestionSelection as QuestionSelection
 from entity_align_system import HikeMetaClass
 
@@ -17,8 +17,8 @@ class HikeManager(object):
 
     def entity_align(self):
         Input().input_data()
-        entity_blocks = EntityPartition().partition()
-        partial_orders = PartialOrderConstruct().construct_partial_order(entity_blocks)
+        entity_blocks, pp_blocks = EntityPartition().partition()
+        partial_orders = PartialOrderConstruct().construct_partial_order(entity_blocks, pp_blocks)
         questions = QuestionSelection(partial_orders) # questions variable is a dict that includes questions and anwsers
 
         matched_entity_pairs = self.generate_matched_pairs(partial_orders, questions)

@@ -8,7 +8,7 @@ from entity_align_system import HikeMetaClass
 import numpy as np
 
 
-class EntityPartion(object):
+class EntityPartition(object):
     __metaclass__ = HikeMetaClass
 
     def __init__(self, dboperator):
@@ -40,7 +40,7 @@ class EntityPartion(object):
 
         self.dboperator.close_connection()
 
-        return entity_pair_blocks
+        return entity_pair_blocks, partition_queue
 
     def get_pred_pairs(self, dbpedia_preds, yago_preds):
         dbpedia_pred_num = len(dbpedia_preds)
