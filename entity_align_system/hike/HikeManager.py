@@ -4,7 +4,7 @@ This module controls other hike modules.This module makes data flow through othe
 '''
 
 # use as statement to make refactor easier
-from entity_align_system.models.Input import Input
+from entity_align_system.hike.KBDataInput import Input
 from EntityPartition import EntityPartition
 from PartialOrderConstruct import PartialOrderConstruct
 import QuestionSelection as QuestionSelection

@@ -1,13 +1,27 @@
 # -*- coding:utf-8 -*-
 from __future__ import division
-from entity_align_system.models.MysqlConnector import MysqlConnector
+from entity_align_system.utils import Logging
+import MySQLdb
 import math
 
+logger = Logging.get_logger()
 
 class MysqlOperator(object):
-    def connect_db(self):
-        self.db_connector = MysqlConnector()
-        self.cursor = self.db_connector.get_cursor()
+    # constant
+    DEFAULT_HOST = "localhost"
+    DEFAULT_USER = "root"
+    DEFAULT_DB = "hike"
+
+    # variable
+    db = None
+
+    def connect_db(self,dbname=None):
+        if dbname == None:
+            dbname = self.DEFAULT_DB
+        if self.db == None:
+            self.db = MySQLdb.connect(host=self.DEFAULT_HOST, user=self.DEFAULT_USER, db=dbname, charset='utf8')
+
+        self.cursor = self.db.cursor()
 
     def get_predicates(self, kbname):
         statement = "SELECT DISTINCT predicate FROM %s" % kbname
@@ -55,14 +69,26 @@ class MysqlOperator(object):
 
         return self.cursor.execute(statement)
 
-    def insert_kbdata(self, dataset):
-        pass
+    def insert_kbdata(self, kbname, dataset):
+        statement = "INSERT INTO %s(subject, predicate, object) values" % kbname
+        statement += "(%s, %s, %s)"
+        # self.cursor.executemany(statement, dataset)
+        index = 0
+        for data in dataset:
+            try:
+                self.cursor.execute(statement,data)
+                self.db.commit()
+                index += 1
+            except Exception as e:
+                logger.error("Error occurs when inserting data\n%s", e.message)
 
     def insert_entity_pairs(self, matched_entity_pairs):
         pass
 
     def close_connection(self):
-        self.db_connector.close()
+        self.db.close()
+        self.db = None
+
 
 class MongoOperator(object):
     pass
